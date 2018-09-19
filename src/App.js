@@ -10,7 +10,7 @@ class App extends Component {
 
         this.getPrimary = this.getPrimary.bind(this)
         this.getSecondary = this.getSecondary.bind(this)
-        this.processData = this.processData.bind(this)
+        this.formatDate = this.formatDate.bind(this)
         this.catchDiscrepancies = this.catchDiscrepancies.bind(this)
         this.orderByDate = this.orderByDate.bind(this)
     }
@@ -40,7 +40,7 @@ class App extends Component {
             })
         })
     }
-    processData(item, n) {
+    formatDate(item, n) {
         item.id = n
         var newDate = new Date(item.start_time)
         var minutes = newDate.getMinutes() + ""
@@ -52,7 +52,7 @@ class App extends Component {
             "/" +
             newDate.getMonth() +
             "/" +
-            (newDate.getYear() + 1900 )+
+            ( newDate.getYear() + 1900 ) +
             " at " +
             newDate.getHours() +
            ":" +
@@ -64,9 +64,9 @@ class App extends Component {
         const primaryClone = this.state.primary
         const secondaryClone = this.state.secondary
         for (var i = 0; i < primaryClone.length; i++) {
-            this.processData(primaryClone[i], i)
+            this.formatDate(primaryClone[i], i)
             for (var j = 0; j < secondaryClone.length; j++) {
-                this.processData(secondaryClone[j], j)
+                this.formatDate(secondaryClone[j], j)
             }
             for (var key in primaryClone[i]) {
                 if (key !== "formattedDate") {
@@ -77,7 +77,21 @@ class App extends Component {
                 }
             }
         }
-        this.setState({ primary: primaryClone, secondary: secondaryClone, filtered: true })
+        if (secondaryClone.length === primaryClone.length) {
+            // for (var i = 0; i < primaryClone.length; i++) {
+            //     primaryClone[i].duplicate = true
+            // }
+                this.setState({ message: true })
+        } else {
+            if (secondaryClone.length < primaryClone.length) {
+                difference = primaryClone.length - secondaryClone.length
+                this.setState({ warning: difference + " fixtures missing in secondary.json" })
+            } else {
+                difference = secondaryClone.length - primaryClone.length
+                this.setState({ warning: difference + " fixtures missing in primary.json" })
+            }
+            this.setState({ primary: primaryClone, secondary: secondaryClone, filtered: true })
+        }
     }
     async orderByDate() {
         const primaryClone = await this.state.primary.sort((a, b) => {
