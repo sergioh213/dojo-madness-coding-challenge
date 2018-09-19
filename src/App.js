@@ -10,7 +10,7 @@ class App extends Component {
 
         this.getPrimary = this.getPrimary.bind(this)
         this.getSecondary = this.getSecondary.bind(this)
-        this.formatDate = this.formatDate.bind(this)
+        this.processData = this.processData.bind(this)
         this.catchDiscrepancies = this.catchDiscrepancies.bind(this)
         this.orderByDate = this.orderByDate.bind(this)
     }
@@ -40,18 +40,7 @@ class App extends Component {
             })
         })
     }
-    async mapping() {
-        const primaryClone = this.state.primary
-        const secondaryClone = this.state.secondary
-        var myMap = new Map()
-
-        for (var i = 0; i < secondaryClone.length; i++) {
-            for (var i = 0; i < primaryClone.length; i++) {
-                myMap.set(secondaryClone[i], primaryClone[i])
-            }
-        }
-    }
-    formatDate(item, n) {
+    processData(item, n) {
         item.id = n
         var newDate = new Date(item.start_time)
         var minutes = newDate.getMinutes() + ""
@@ -63,7 +52,7 @@ class App extends Component {
             "/" +
             newDate.getMonth() +
             "/" +
-            newDate.getYear() +
+            (newDate.getYear() + 1900 )+
             " at " +
             newDate.getHours() +
            ":" +
@@ -75,9 +64,9 @@ class App extends Component {
         const primaryClone = this.state.primary
         const secondaryClone = this.state.secondary
         for (var i = 0; i < primaryClone.length; i++) {
-            this.formatDate(primaryClone[i], i)
+            this.processData(primaryClone[i], i)
             for (var j = 0; j < secondaryClone.length; j++) {
-                this.formatDate(secondaryClone[j], j)
+                this.processData(secondaryClone[j], j)
             }
             for (var key in primaryClone[i]) {
                 if (key !== "formattedDate") {
